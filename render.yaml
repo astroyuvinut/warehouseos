@@ -1,0 +1,20 @@
+# Render blueprint. WarehouseOS keeps state in SQLite on disk and broadcasts
+# live updates from an in-process bus, so it must run as ONE instance with a
+# persistent disk — never scaled horizontally without swapping the storage
+# layer for Postgres and the bus for Redis pub/sub.
+services:
+  - type: web
+    name: warehouseos
+    runtime: docker
+    plan: starter # the free plan has no persistent disk; state would reset on redeploy
+    numInstances: 1
+    healthCheckPath: /api/health
+    envVars:
+      - key: WAREHOUSEOS_DATA_DIR
+        value: /data
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+    disk:
+      name: warehouseos-data
+      mountPath: /data
+      sizeGB: 1
