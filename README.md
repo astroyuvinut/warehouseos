@@ -170,10 +170,17 @@ the pick, and the optimized route always beats the baseline over an identical se
 Deploy to any host that runs a **single persistent Node process with a writable disk** — Render, Railway, Fly.io, or a plain VPS. SQLite state lives on disk and the live-sync bus is in-process, so the app should not be spread across serverless instances without swapping the storage layer for Postgres and the bus for Redis pub/sub. Both are isolated behind `lib/server/db.ts` and `lib/server/bus.ts`, so that swap touches two files and no engine code.
 
 A `Dockerfile` (multi-stage, Next standalone output, non-root, health-checked) and a `render.yaml`
-blueprint are included. On Render: **New → Blueprint**, point it at this repo, and it provisions the
-service with a 1 GB disk mounted at `/data`. The one setting that matters is `WAREHOUSEOS_DATA_DIR`,
-which must point at the mounted volume — without a persistent disk the database resets on every
-redeploy. Keep the service at a single instance.
+blueprint are included. On Render: **New → Blueprint**, point it at this repo, apply.
+
+The blueprint targets the **free plan**, which has no persistent disk — the database lives on the
+container's ephemeral filesystem. State holds for the life of the running instance (refreshes,
+multiple clients, live sync all work) but resets when Render spins the instance down after inactivity
+or on redeploy; a visitor landing on a cold instance sees the hero screen and clicks
+"Seed & run everything". To make state durable, switch `plan` to `starter` and add a `disk:` block
+mounted at `/data` — `WAREHOUSEOS_DATA_DIR` already points there, so no application code changes.
+
+Either way the service must stay at **one instance**: SQLite on local disk and an in-process event bus
+cannot be shared across replicas.
 
 ```bash
 docker build -t warehouseos .

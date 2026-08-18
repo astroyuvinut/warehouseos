@@ -18,15 +18,21 @@ export default function OpsConsole() {
             WarehouseOS continuously prioritizes orders, allocates scarce inventory, optimizes pick
             routes, and resolves exceptions — and explains every decision it makes.
           </p>
+          {/* Full pipeline leads: a visitor arriving cold gets a populated
+              dashboard in one click. Stepping through engine by engine stays
+              available for a narrated demo. */}
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
-            <button className="btn btn-primary" disabled={pending} onClick={() => dispatch({ type: "seed" })}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-              {pending ? "Seeding…" : "Seed Demo Data"}
+            <button className="btn btn-primary" disabled={pending} onClick={() => dispatch({ type: "runPipeline" })}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              {pending ? "Running…" : "Seed & run everything"}
             </button>
-            <button className="btn" disabled={pending} onClick={() => dispatch({ type: "runPipeline" })}>
-              Seed &amp; run everything
+            <button className="btn" disabled={pending} onClick={() => dispatch({ type: "seed" })}>
+              Seed data only
             </button>
           </div>
+          <span style={{ fontSize: 12.5, color: "var(--muted)" }}>
+            Seeds a deterministic 8-order warehouse and runs all three engines.
+          </span>
         </div>
       </div>
     );
