@@ -4,6 +4,8 @@
 
 FROM node:22-alpine AS deps
 WORKDIR /app
+# Next.js needs glibc compatibility shims on Alpine.
+RUN apk add --no-cache libc6-compat
 COPY package.json package-lock.json ./
 RUN npm ci
 
