@@ -53,24 +53,13 @@ export default function InventoryPage() {
         <div className="card-head">
           <h2>Stock Position</h2>
           <input
+            className="field card-head-search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search SKU…"
-            style={{
-              marginLeft: 8,
-              background: "var(--surface-2)",
-              border: "1px solid var(--line-strong)",
-              borderRadius: 8,
-              padding: "6px 12px",
-              color: "var(--text)",
-              fontSize: 13,
-              outline: "none",
-              width: 220,
-            }}
           />
           <button
-            className="btn btn-primary"
-            style={{ marginLeft: "auto" }}
+            className="btn btn-primary card-head-action"
             disabled={!canAllocate || pending}
             title={canAllocate ? undefined : "Run the priority engine first"}
             onClick={() => dispatch({ type: "runAllocation" })}
@@ -83,8 +72,8 @@ export default function InventoryPage() {
           <table className="data">
             <thead>
               <tr>
-                <th>SKU</th><th>Name</th><th>Bins</th><th>Availability</th>
-                <th>On-hand</th><th>Reserved</th><th>Demand</th><th>ROP / SS</th><th>Signal</th>
+                <th>SKU</th><th>Name</th><th className="hide-sm">Bins</th><th>Availability</th>
+                <th>On-hand</th><th className="hide-sm">Reserved</th><th>Demand</th><th className="hide-sm">ROP / SS</th><th>Signal</th>
               </tr>
             </thead>
             <tbody>
@@ -95,10 +84,10 @@ export default function InventoryPage() {
                 const belowRop = onHand < reorder.reorderPoint;
                 return (
                   <tr key={sku.skuId}>
-                    <td className="num" style={{ fontWeight: 600 }}>{sku.skuId}</td>
-                    <td>{sku.name}</td>
-                    <td className="num" style={{ color: "var(--muted)" }}>{inv.map((r) => r.binId).join(", ")}</td>
-                    <td>
+                    <td className="num td-primary" data-label="SKU" style={{ fontWeight: 600 }}>{sku.skuId}</td>
+                    <td data-label="Name">{sku.name}</td>
+                    <td className="num hide-sm" data-label="Bins" style={{ color: "var(--muted)" }}>{inv.map((r) => r.binId).join(", ")}</td>
+                    <td className="td-bar" data-label="Availability">
                       <div className="availbar">
                         <div
                           style={{
@@ -108,11 +97,11 @@ export default function InventoryPage() {
                         />
                       </div>
                     </td>
-                    <td className="num">{onHand}</td>
-                    <td className="num" style={{ color: reserved ? "var(--primary-strong)" : "var(--faint)" }}>{reserved}</td>
-                    <td className="num">{demand}</td>
-                    <td className="num" style={{ color: "var(--muted)" }}>{reorder.reorderPoint} / {reorder.safetyStock}</td>
-                    <td>
+                    <td className="num" data-label="On-hand">{onHand}</td>
+                    <td className="num hide-sm" data-label="Reserved" style={{ color: reserved ? "var(--primary-strong)" : "var(--faint)" }}>{reserved}</td>
+                    <td className="num" data-label="Demand">{demand}</td>
+                    <td className="num hide-sm" data-label="ROP / SS" style={{ color: "var(--muted)" }}>{reorder.reorderPoint} / {reorder.safetyStock}</td>
+                    <td data-label="Signal">
                       {short ? (
                         <span className="chip chip-danger">short {demand - onHand}</span>
                       ) : belowRop ? (
@@ -151,22 +140,22 @@ export default function InventoryPage() {
             <table className="data">
               <thead>
                 <tr>
-                  <th>ID</th><th>Order</th><th>SKU</th><th>Bin</th><th>Qty</th><th>Action</th><th>Reason</th>
+                  <th className="hide-sm">ID</th><th>Order</th><th>SKU</th><th>Bin</th><th>Qty</th><th>Action</th><th>Reason</th>
                 </tr>
               </thead>
               <tbody>
                 {state.allocations.map((a) => (
                   <tr key={a.allocationId}>
-                    <td className="num" style={{ color: "var(--faint)" }}>{a.allocationId}</td>
-                    <td className="num" style={{ fontWeight: 600 }}>{a.orderId}</td>
-                    <td className="num">{a.skuId}</td>
-                    <td className="num">{a.binId}</td>
-                    <td className="num">{a.qty}</td>
-                    <td>
+                    <td className="num hide-sm" data-label="ID" style={{ color: "var(--faint)" }}>{a.allocationId}</td>
+                    <td className="num td-primary" data-label="Order" style={{ fontWeight: 600 }}>{a.orderId}</td>
+                    <td className="num" data-label="SKU">{a.skuId}</td>
+                    <td className="num" data-label="Bin">{a.binId}</td>
+                    <td className="num" data-label="Qty">{a.qty}</td>
+                    <td data-label="Action">
                       <span className={`chip ${ACTION_CHIP[a.action]}`}>{a.action}</span>
                       {a.picked && <span className="chip chip-success" style={{ marginLeft: 6 }}>picked · locked</span>}
                     </td>
-                    <td style={{ color: "var(--muted)", fontSize: 12.5, maxWidth: 380 }}>{a.reason}</td>
+                    <td className="td-wide" data-label="Reason" style={{ color: "var(--muted)", fontSize: 12.5, maxWidth: 380 }}>{a.reason}</td>
                   </tr>
                 ))}
               </tbody>

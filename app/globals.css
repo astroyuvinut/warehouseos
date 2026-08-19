@@ -37,6 +37,7 @@
   --shadow: 0 1px 2px rgba(60, 64, 67, 0.1), 0 1px 3px 1px rgba(60, 64, 67, 0.04);
   --shadow-lift: 0 1px 3px rgba(60, 64, 67, 0.18), 0 8px 24px rgba(60, 64, 67, 0.12);
   --sidebar-w: 256px;
+  --tabbar-h: 58px;
 }
 
 * {
@@ -57,6 +58,9 @@ body {
   font-size: 14px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 ::selection {
@@ -81,6 +85,7 @@ button {
 .shell {
   display: flex;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .sidebar {
@@ -102,8 +107,8 @@ button {
 }
 
 .icon-btn {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -112,9 +117,11 @@ button {
   flex-shrink: 0;
 }
 
-.icon-btn:hover {
-  background: var(--surface-3);
-  color: var(--text);
+@media (hover: hover) {
+  .icon-btn:hover {
+    background: var(--surface-3);
+    color: var(--text);
+  }
 }
 
 .nav-overlay {
@@ -218,11 +225,18 @@ button {
   z-index: 20;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  row-gap: 8px;
   gap: 16px;
   padding: 14px 32px;
   border-bottom: 1px solid var(--line-strong);
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(10px);
+}
+
+.topbar-title {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .topbar h1 {
@@ -241,7 +255,10 @@ button {
   margin-left: auto;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 10px;
+  min-width: 0;
 }
 
 .content {
@@ -266,9 +283,54 @@ button {
 .card-head {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  row-gap: 8px;
   gap: 12px;
   padding: 16px 20px;
   border-bottom: 1px solid var(--line);
+}
+
+/* The subtitle gets its own line before the action group is squeezed. */
+.card-head > .sub {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.card-head-action {
+  margin-left: auto;
+}
+
+.card-head-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.field {
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  padding: 7px 12px;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+}
+
+.field:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.card-head-search {
+  width: 220px;
+}
+
+/* ---------- Bottom tab bar (phones) ---------- */
+
+.tabbar {
+  display: none;
 }
 
 .card-head h2 {
@@ -386,6 +448,8 @@ button {
 
 .table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
 }
 
 table.data {
@@ -418,8 +482,10 @@ table.data tbody tr {
   transition: background 0.12s ease;
 }
 
-table.data tbody tr:hover {
-  background: var(--surface-2);
+@media (hover: hover) {
+  table.data tbody tr:hover {
+    background: var(--surface-2);
+  }
 }
 
 table.data tbody tr.clickable {
@@ -430,11 +496,16 @@ table.data tbody tr:last-child td {
   border-bottom: none;
 }
 
+/* Cell labels only render in the stacked phone layout. */
+table.data td::before {
+  display: none;
+}
+
 /* ---------- KPI cards ---------- */
 
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
   gap: 14px;
 }
 
@@ -509,7 +580,7 @@ table.data tbody tr:last-child td {
   border-radius: 999px;
   background: var(--surface-3);
   overflow: hidden;
-  min-width: 120px;
+  min-width: 80px;
 }
 
 .availbar > div {
@@ -531,7 +602,7 @@ table.data tbody tr:last-child td {
   top: 0;
   right: 0;
   bottom: 0;
-  width: min(480px, 92vw);
+  width: min(480px, 100vw);
   background: var(--surface);
   box-shadow: var(--shadow-lift);
   z-index: 50;
@@ -690,6 +761,7 @@ table.data tbody tr:last-child td {
 
 .tl-diff {
   display: inline-flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: center;
   margin-top: 6px;
@@ -752,7 +824,7 @@ table.data tbody tr:last-child td {
 /* ---------- Hero / landing ---------- */
 
 .hero {
-  padding: 80px 32px;
+  padding: clamp(40px, 10vw, 80px) clamp(16px, 5vw, 32px);
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -761,7 +833,7 @@ table.data tbody tr:last-child td {
 }
 
 .hero h1 {
-  font-size: 34px;
+  font-size: clamp(24px, 6.4vw, 34px);
   font-weight: 650;
   letter-spacing: -0.02em;
   color: var(--text);
@@ -1035,7 +1107,7 @@ input::placeholder {
 
 .viz-bars {
   flex: 1;
-  min-width: 280px;
+  min-width: min(280px, 100%);
 }
 
 .viz-scroll {
@@ -1046,7 +1118,7 @@ input::placeholder {
    panels share a scale, so they sit in equal grid tracks. */
 .viz-map-pair {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: 20px;
 }
 
@@ -1123,6 +1195,12 @@ input::placeholder {
 
 /* ---------- Responsive ---------- */
 
+/* Breakpoints, top down:
+   1360 - sidebar collapses to an overlay drawer (tablet landscape and below)
+    900 - two-column layouts go single-column
+    760 - phone layout: bottom tab bar, stacked card heads, tables as list rows
+    520 - tightest padding and type scale */
+
 @media (max-width: 1360px) {
   /* Sidebar becomes a slide-in drawer over the content. */
   .sidebar {
@@ -1130,12 +1208,14 @@ input::placeholder {
     left: 0;
     top: 0;
     bottom: 0;
+    width: min(var(--sidebar-w), 84vw);
     height: 100dvh;
     z-index: 60;
     margin-left: 0;
     transform: translateX(-102%);
     transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: none;
+    padding-left: max(12px, env(safe-area-inset-left));
   }
   .sidebar.open {
     transform: none;
@@ -1152,11 +1232,341 @@ input::placeholder {
     z-index: 50;
     animation: fadeIn 0.2s ease;
   }
-  .topbar { padding: 12px 16px; }
-  .content { padding: 20px 16px 40px; }
+  .topbar {
+    padding: 12px max(16px, env(safe-area-inset-right)) 12px max(16px, env(safe-area-inset-left));
+  }
+  .content {
+    padding: 20px max(16px, env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom))
+      max(16px, env(safe-area-inset-left));
+  }
 }
 
-@media (max-width: 860px) {
-  .grid-2 { grid-template-columns: 1fr; }
-  .hero h1 { font-size: 26px; }
+@media (max-width: 900px) {
+  .topbar h1 {
+    font-size: 16px;
+  }
+  .topbar .sub {
+    font-size: 12px;
+  }
+  .grid-2,
+  .viz-map-pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ============ Phone layout ============ */
+
+@media (max-width: 760px) {
+  /* --- Navigation moves to a fixed bottom tab bar --- */
+  .sidebar,
+  .nav-overlay,
+  .nav-toggle {
+    display: none !important;
+  }
+
+  .tabbar {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 70;
+    height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line-strong);
+  }
+  .tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: var(--faint);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    min-width: 0;
+  }
+  .tab.active {
+    color: var(--primary-strong);
+  }
+  .tab-icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 22px;
+    border-radius: 999px;
+    transition: background 0.15s ease;
+  }
+  .tab.active .tab-icon {
+    background: var(--primary-soft);
+  }
+  /* A count would not survive 10px type here, so unread shows as a dot. */
+  .tab-dot {
+    position: absolute;
+    top: -1px;
+    right: 4px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--danger);
+    border: 1.5px solid var(--surface);
+  }
+  .tab-label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Content clears the bar, and so do the overlay surfaces above it. */
+  .content {
+    padding-bottom: calc(var(--tabbar-h) + 24px + env(safe-area-inset-bottom));
+  }
+  .drawer {
+    z-index: 80;
+  }
+  .drawer-overlay {
+    z-index: 75;
+  }
+
+  /* --- Header: one tight row, title left, controls right --- */
+  .topbar {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .topbar-title {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .topbar-title .sub {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topbar-right .topbar-meta {
+    display: none;
+  }
+  .topbar-right {
+    margin-left: auto;
+    flex-wrap: nowrap;
+  }
+
+  /* --- Card heads stack left-aligned; actions become full-width --- */
+  .card-head {
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 10px;
+    padding: 14px 16px;
+  }
+  .card-head > .sub {
+    flex: none;
+  }
+  .card-head-action,
+  .card-head-actions {
+    margin-left: 0;
+  }
+  .card-head-action.btn,
+  .card-head-actions .btn:not(.btn-ghost) {
+    width: 100%;
+    justify-content: center;
+  }
+  .card-head-search,
+  .card-head .field {
+    width: 100%;
+  }
+  /* A row of filters scrolls sideways rather than stacking into a wall.
+     It must stay inside the card's padding box: a negative margin here
+     would widen the card and put the whole page back into sideways scroll. */
+  .filter-strip {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+    max-width: 100%;
+  }
+  .filter-strip::-webkit-scrollbar {
+    display: none;
+  }
+  .filter-strip > * {
+    flex: 0 0 auto;
+  }
+  .filter-strip .field {
+    width: auto;
+  }
+
+  .card-body {
+    padding: 16px;
+  }
+
+  /* --- Tables become stacked list rows --- */
+  .table-wrap:not(.table-keep) {
+    overflow-x: visible;
+  }
+  .table-wrap:not(.table-keep) table.data,
+  .table-wrap:not(.table-keep) table.data tbody {
+    display: block;
+  }
+  .table-wrap:not(.table-keep) table.data thead {
+    display: none;
+  }
+  .table-wrap:not(.table-keep) table.data tr {
+    display: block;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .table-wrap:not(.table-keep) table.data tbody tr:last-child {
+    border-bottom: none;
+  }
+  .table-wrap:not(.table-keep) table.data td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 3px 0;
+    border-bottom: none;
+    font-size: 13px;
+    min-height: 22px;
+  }
+  .table-wrap:not(.table-keep) table.data td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--faint);
+    flex-shrink: 0;
+  }
+  .table-wrap:not(.table-keep) table.data .hide-sm {
+    display: none;
+  }
+  /* The identifier is the row's headline, not a labelled field. */
+  .table-wrap:not(.table-keep) table.data td.td-primary {
+    justify-content: flex-start;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text);
+    padding-bottom: 8px;
+  }
+  .table-wrap:not(.table-keep) table.data td.td-primary::before {
+    content: none;
+  }
+  /* Long prose needs the full width, so its label sits above it. */
+  .table-wrap:not(.table-keep) table.data td.td-wide {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding-top: 8px;
+    max-width: none !important;
+  }
+  .table-wrap:not(.table-keep) table.data td.td-bar .availbar {
+    width: 100%;
+    max-width: 180px;
+  }
+  /* Tappable rows get the affordance every mobile list has. */
+  .table-wrap:not(.table-keep) table.data tr.clickable td.td-primary::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    margin-left: auto;
+    margin-right: 3px;
+    border-right: 1.8px solid var(--faint);
+    border-bottom: 1.8px solid var(--faint);
+    transform: rotate(-45deg);
+  }
+  .table-wrap:not(.table-keep) table.data tbody tr.clickable:active {
+    background: var(--surface-2);
+  }
+  /* Drawer tables stay tabular but shed their padding. */
+  .table-keep table.data th,
+  .table-keep table.data td {
+    padding: 8px 10px;
+  }
+
+  /* --- Remaining density --- */
+  .kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(148px, 100%), 1fr));
+    gap: 10px;
+  }
+  .kpi {
+    padding: 14px 16px;
+  }
+  .kpi .value {
+    font-size: 24px;
+  }
+  .drawer-head {
+    padding: 14px 16px;
+  }
+  .drawer-body {
+    padding: 16px;
+    gap: 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+  .empty {
+    padding: 40px 16px;
+  }
+  .timeline {
+    padding-left: 22px;
+  }
+  .banner {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 520px) {
+  .content {
+    padding: 16px 12px calc(var(--tabbar-h) + 20px + env(safe-area-inset-bottom));
+    gap: 14px;
+  }
+  .topbar {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .card-head,
+  .table-wrap:not(.table-keep) table.data tr {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .card-body {
+    padding: 14px;
+  }
+  .filter-strip {
+    margin: 0 -14px;
+    padding: 0 14px 2px;
+  }
+  .kpi {
+    padding: 12px 14px;
+  }
+  .kpi .value {
+    font-size: 22px;
+  }
+  .btn {
+    padding: 8px 13px;
+    font-size: 13px;
+  }
+  /* 16px keeps iOS Safari from zooming the viewport on focus. */
+  input,
+  select,
+  textarea,
+  .field {
+    font-size: 16px;
+  }
+}
+
+/* Fingers need more room than a cursor does. */
+@media (pointer: coarse) {
+  .btn {
+    min-height: 40px;
+  }
+  .nav-item {
+    padding: 11px 14px;
+  }
 }

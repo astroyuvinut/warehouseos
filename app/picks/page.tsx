@@ -43,8 +43,7 @@ export default function PicksPage() {
           <h2>Pick Batches</h2>
           <span className="sub">Separated by SLA band · clustered by zone · capacity-capped</span>
           <button
-            className="btn btn-primary"
-            style={{ marginLeft: "auto" }}
+            className="btn btn-primary card-head-action"
             disabled={!canBatch || pending}
             title={canBatch ? undefined : "Run allocation first"}
             onClick={() => dispatch({ type: "runBatching" })}
@@ -63,7 +62,7 @@ export default function PicksPage() {
             <table className="data">
               <thead>
                 <tr>
-                  <th>Batch</th><th>Band</th><th>Lines</th><th>Route stops</th><th>Distance</th><th>Est. walk</th><th>Why this batch</th>
+                  <th>Batch</th><th>Band</th><th>Lines</th><th>Route stops</th><th className="hide-sm">Distance</th><th>Est. walk</th><th>Why this batch</th>
                 </tr>
               </thead>
               <tbody>
@@ -74,13 +73,13 @@ export default function PicksPage() {
                     onClick={() => setSelectedId(b.batchId)}
                     style={selected?.batchId === b.batchId ? { background: "var(--primary-soft)" } : undefined}
                   >
-                    <td className="num" style={{ fontWeight: 600 }}>{b.batchId}</td>
-                    <td><BandChip band={b.slaBand} /></td>
-                    <td className="num">{b.taskIds.length}</td>
-                    <td className="num" style={{ color: "var(--muted)" }}>{b.route.join(" → ")}</td>
-                    <td className="num">{b.distance}u</td>
-                    <td className="num">{b.estWalkTimeMin} min</td>
-                    <td style={{ color: "var(--muted)", fontSize: 12.5, maxWidth: 340 }}>{b.reason}</td>
+                    <td className="num td-primary" data-label="Batch" style={{ fontWeight: 600 }}>{b.batchId}</td>
+                    <td data-label="Band"><BandChip band={b.slaBand} /></td>
+                    <td className="num" data-label="Lines">{b.taskIds.length}</td>
+                    <td className="num td-wide" data-label="Route stops" style={{ color: "var(--muted)" }}>{b.route.join(" → ")}</td>
+                    <td className="num hide-sm" data-label="Distance">{b.distance}u</td>
+                    <td className="num" data-label="Est. walk">{b.estWalkTimeMin} min</td>
+                    <td className="td-wide" data-label="Why this batch" style={{ color: "var(--muted)", fontSize: 12.5, maxWidth: 340 }}>{b.reason}</td>
                   </tr>
                 ))}
               </tbody>
@@ -96,7 +95,7 @@ export default function PicksPage() {
           <div className="card">
             <div className="card-head">
               <h2>Route Preview — {selected.batchId}</h2>
-              <span className="sub num" style={{ marginLeft: "auto" }}>
+              <span className="sub num card-head-action">
                 {selected.distance}u · {selected.estWalkTimeMin} min
               </span>
             </div>
@@ -167,7 +166,7 @@ export default function PicksPage() {
             <div className="table-wrap">
               <table className="data">
                 <thead>
-                  <tr><th>#</th><th>Task</th><th>Order</th><th>SKU</th><th>Bin</th><th>Qty</th><th>Status</th></tr>
+                  <tr><th>#</th><th className="hide-sm">Task</th><th>Order</th><th>SKU</th><th>Bin</th><th>Qty</th><th>Status</th></tr>
                 </thead>
                 <tbody>
                   {state.pickTasks
@@ -175,15 +174,15 @@ export default function PicksPage() {
                     .sort((a, b) => (a.sequence ?? 99) - (b.sequence ?? 99))
                     .map((t, i) => (
                       <tr key={t.pickTaskId}>
-                        <td>
+                        <td className="td-primary" data-label="#">
                           <span className="route-step"><span className="idx">{t.sequence ?? i + 1}</span></span>
                         </td>
-                        <td className="num" style={{ color: "var(--faint)" }}>{t.pickTaskId}</td>
-                        <td className="num">{t.orderId}</td>
-                        <td className="num">{t.skuId}</td>
-                        <td className="num">{t.binId}</td>
-                        <td className="num">{t.qty}</td>
-                        <td><StatusChip status={t.status} /></td>
+                        <td className="num hide-sm" data-label="Task" style={{ color: "var(--faint)" }}>{t.pickTaskId}</td>
+                        <td className="num" data-label="Order">{t.orderId}</td>
+                        <td className="num" data-label="SKU">{t.skuId}</td>
+                        <td className="num" data-label="Bin">{t.binId}</td>
+                        <td className="num" data-label="Qty">{t.qty}</td>
+                        <td data-label="Status"><StatusChip status={t.status} /></td>
                       </tr>
                     ))}
                 </tbody>

@@ -43,8 +43,7 @@ export default function OrdersPage() {
             {scored ? "Ranked by priority score — click a row for the reasoning" : "Unscored — run the priority engine"}
           </span>
           <button
-            className="btn btn-primary"
-            style={{ marginLeft: "auto" }}
+            className="btn btn-primary card-head-action"
             disabled={pending}
             onClick={() => dispatch({ type: "recomputePriorities" })}
           >
@@ -56,8 +55,8 @@ export default function OrdersPage() {
           <table className="data">
             <thead>
               <tr>
-                <th>Rank</th><th>Order</th><th>Customer</th><th>Tier</th><th>Band</th>
-                <th>Score</th><th>SLA due</th><th>Value</th><th>Risk</th><th>Status</th>
+                <th className="hide-sm">Rank</th><th>Order</th><th>Customer</th><th className="hide-sm">Tier</th><th>Band</th>
+                <th className="hide-sm">Score</th><th>SLA due</th><th className="hide-sm">Value</th><th className="hide-sm">Risk</th><th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -65,18 +64,18 @@ export default function OrdersPage() {
                 const urgent = o.slaDueOffsetMin - state.simMinute <= 60;
                 return (
                   <tr key={o.orderId} className="clickable" onClick={() => setSelected(o)}>
-                    <td className="num" style={{ color: "var(--faint)" }}>{scored ? i + 1 : "—"}</td>
-                    <td className="num" style={{ fontWeight: 600 }}>{o.orderId}</td>
-                    <td>{o.customer}</td>
-                    <td style={{ color: "var(--muted)" }}>{o.customerTier}</td>
-                    <td><BandChip band={o.priorityBand} /></td>
-                    <td className="num">{o.priorityScore !== null ? o.priorityScore.toFixed(3) : "—"}</td>
-                    <td className="num" style={{ color: urgent ? "var(--danger-strong)" : undefined, fontWeight: urgent ? 600 : undefined }}>
+                    <td className="num hide-sm" data-label="Rank" style={{ color: "var(--faint)" }}>{scored ? i + 1 : "—"}</td>
+                    <td className="num td-primary" data-label="Order" style={{ fontWeight: 600 }}>{o.orderId}</td>
+                    <td data-label="Customer">{o.customer}</td>
+                    <td className="hide-sm" data-label="Tier" style={{ color: "var(--muted)" }}>{o.customerTier}</td>
+                    <td data-label="Band"><BandChip band={o.priorityBand} /></td>
+                    <td className="num hide-sm" data-label="Score">{o.priorityScore !== null ? o.priorityScore.toFixed(3) : "—"}</td>
+                    <td className="num" data-label="SLA due" style={{ color: urgent ? "var(--danger-strong)" : undefined, fontWeight: urgent ? 600 : undefined }}>
                       {o.slaDueOffsetMin - state.simMinute} min
                     </td>
-                    <td className="num">${o.orderValue.toLocaleString()}</td>
-                    <td className="num">{Math.round(o.stockoutRisk * 100)}%</td>
-                    <td><StatusChip status={o.status} /></td>
+                    <td className="num hide-sm" data-label="Value">${o.orderValue.toLocaleString()}</td>
+                    <td className="num hide-sm" data-label="Risk">{Math.round(o.stockoutRisk * 100)}%</td>
+                    <td data-label="Status"><StatusChip status={o.status} /></td>
                   </tr>
                 );
               })}
@@ -145,7 +144,7 @@ export default function OrdersPage() {
 
               <div>
                 <div className="section-title" style={{ marginBottom: 10 }}>Lines</div>
-                <div className="table-wrap" style={{ border: "1px solid var(--line)", borderRadius: 8 }}>
+                <div className="table-wrap table-keep" style={{ border: "1px solid var(--line)", borderRadius: 8 }}>
                   <table className="data">
                     <thead>
                       <tr><th>SKU</th><th>Req</th><th>Alloc</th><th>Picked</th></tr>

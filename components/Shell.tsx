@@ -26,13 +26,14 @@ const Icon = {
   ),
 };
 
+// `short` is the tab-bar label — it has ~54px to live in, so it is a single word.
 const NAV = [
-  { href: "/", label: "Ops Console", icon: Icon.console, title: "Ops Console", sub: "Run engines · live state" },
-  { href: "/orders", label: "Orders", icon: Icon.orders, title: "Orders", sub: "Priority-ranked queue with rationale" },
-  { href: "/inventory", label: "Inventory & Scarcity", icon: Icon.inventory, title: "Inventory & Scarcity", sub: "Availability, allocation & conflicts" },
-  { href: "/picks", label: "Pick Batches & Route", icon: Icon.picks, title: "Pick Batches & Route", sub: "Batched by urgency, optimized routes" },
-  { href: "/exceptions", label: "Exceptions", icon: Icon.exceptions, title: "Exceptions", sub: "Inject, auto-resolve, escalate" },
-  { href: "/audit", label: "Audit", icon: Icon.audit, title: "Audit Trail", sub: "Every decision, explained" },
+  { href: "/", label: "Ops Console", short: "Console", icon: Icon.console, title: "Ops Console", sub: "Run engines · live state" },
+  { href: "/orders", label: "Orders", short: "Orders", icon: Icon.orders, title: "Orders", sub: "Priority-ranked queue with rationale" },
+  { href: "/inventory", label: "Inventory & Scarcity", short: "Stock", icon: Icon.inventory, title: "Inventory & Scarcity", sub: "Availability, allocation & conflicts" },
+  { href: "/picks", label: "Pick Batches & Route", short: "Picks", icon: Icon.picks, title: "Pick Batches & Route", sub: "Batched by urgency, optimized routes" },
+  { href: "/exceptions", label: "Exceptions", short: "Alerts", icon: Icon.exceptions, title: "Exceptions", sub: "Inject, auto-resolve, escalate" },
+  { href: "/audit", label: "Audit", short: "Audit", icon: Icon.audit, title: "Audit Trail", sub: "Every decision, explained" },
 ];
 
 const DRAWER_BREAKPOINT = 1360;
@@ -138,23 +139,23 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       <div className="main">
         <header className="topbar">
           <button
-            className="icon-btn"
+            className="icon-btn nav-toggle"
             aria-label={navOpen ? "Hide navigation" : "Show navigation"}
             onClick={() => setNavChoice(!navOpen)}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
-          <div>
+          <div className="topbar-title">
             <h1>{current.title}</h1>
             <div className="sub">{current.sub}</div>
           </div>
           <div className="topbar-right">
             {pending && <span className="chip chip-p2">engine running…</span>}
             {state.lastRun.priority && (
-              <span className="chip chip-neutral num">priority run {state.lastRun.priority}</span>
+              <span className="chip chip-neutral num topbar-meta">priority run {state.lastRun.priority}</span>
             )}
             {state.lastRun.allocation && (
-              <span className="chip chip-neutral num">allocation {state.lastRun.allocation}</span>
+              <span className="chip chip-neutral num topbar-meta">allocation {state.lastRun.allocation}</span>
             )}
             {state.seeded && (
               <button
@@ -181,6 +182,27 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           {ready ? children : <LoadingState />}
         </div>
       </div>
+
+      {/* Phone navigation. Hidden above the tab-bar breakpoint, where the
+          sidebar takes over — the two are never visible at the same time. */}
+      <nav className="tabbar" aria-label="Sections">
+        {NAV.map((n) => (
+          <Link
+            key={n.href}
+            href={n.href}
+            className={`tab${pathname === n.href ? " active" : ""}`}
+            aria-current={pathname === n.href ? "page" : undefined}
+          >
+            <span className="tab-icon">
+              {n.icon}
+              {n.href === "/exceptions" && openExceptions > 0 && (
+                <span className="tab-dot" aria-hidden="true" />
+              )}
+            </span>
+            <span className="tab-label">{n.short}</span>
+          </Link>
+        ))}
+      </nav>
     </div>
   );
 }

@@ -116,7 +116,7 @@ export default function OpsConsole() {
         <div className="card-head">
           <h2>Decision Pipeline</h2>
           <span className="sub">Run each engine in order — every action lands in the audit trail</span>
-          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          <div className="card-head-actions">
             {engineMs !== null && (
               <span className="chip chip-success num" title="Server-side engine time for the last run">
                 engines ran in {engineMs} ms
@@ -239,7 +239,7 @@ export default function OpsConsole() {
           <div className="card-head">
             <h2>Top of Queue</h2>
             <span className="sub">Highest-priority orders right now</span>
-            <Link href="/orders" className="btn btn-ghost" style={{ marginLeft: "auto", fontSize: 12 }}>
+            <Link href="/orders" className="btn btn-ghost card-head-action" style={{ fontSize: 12 }}>
               All orders →
             </Link>
           </div>
@@ -247,7 +247,7 @@ export default function OpsConsole() {
             <table className="data">
               <thead>
                 <tr>
-                  <th>Order</th><th>Customer</th><th>Band</th><th>Score</th><th>SLA due</th><th>Status</th>
+                  <th>Order</th><th>Customer</th><th>Band</th><th className="hide-sm">Score</th><th>SLA due</th><th>Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -256,12 +256,12 @@ export default function OpsConsole() {
                   .slice(0, 4)
                   .map((o) => (
                     <tr key={o.orderId}>
-                      <td className="num" style={{ fontWeight: 600 }}>{o.orderId}</td>
-                      <td>{o.customer}</td>
-                      <td><BandChip band={o.priorityBand} /></td>
-                      <td className="num">{(o.priorityScore ?? 0).toFixed(3)}</td>
-                      <td className="num">{o.slaDueOffsetMin} min</td>
-                      <td>{o.status}</td>
+                      <td className="num td-primary" data-label="Order" style={{ fontWeight: 600 }}>{o.orderId}</td>
+                      <td data-label="Customer">{o.customer}</td>
+                      <td data-label="Band"><BandChip band={o.priorityBand} /></td>
+                      <td className="num hide-sm" data-label="Score">{(o.priorityScore ?? 0).toFixed(3)}</td>
+                      <td className="num" data-label="SLA due">{o.slaDueOffsetMin} min</td>
+                      <td data-label="Status">{o.status}</td>
                     </tr>
                   ))}
               </tbody>

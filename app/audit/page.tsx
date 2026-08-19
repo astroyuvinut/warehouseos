@@ -45,26 +45,20 @@ export default function AuditPage() {
 
   return (
     <div className="card">
-      <div className="card-head" style={{ flexWrap: "wrap", gap: 10 }}>
+      <div className="card-head">
         <h2>Decision Log</h2>
         <span className="sub num">{filtered.length} of {state.audit.length} entries</span>
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-          <select
-            value={orderFilter}
-            onChange={(e) => setOrderFilter(e.target.value)}
-            style={{
-              background: "var(--surface-2)",
-              border: "1px solid var(--line-strong)",
-              borderRadius: 8,
-              padding: "6px 10px",
-              color: "var(--text)",
-              fontSize: 12.5,
-            }}
-          >
-            {orderIds.map((id) => (
-              <option key={id} value={id}>{id === "All" ? "All orders" : id}</option>
-            ))}
-          </select>
+        <select
+          className="field card-head-action"
+          aria-label="Filter by order"
+          value={orderFilter}
+          onChange={(e) => setOrderFilter(e.target.value)}
+        >
+          {orderIds.map((id) => (
+            <option key={id} value={id}>{id === "All" ? "All orders" : id}</option>
+          ))}
+        </select>
+        <div className="card-head-actions filter-strip">
           {ENGINES.map((e) => (
             <button
               key={e}
